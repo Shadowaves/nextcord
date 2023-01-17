@@ -1,32 +1,27 @@
-.. image:: assets/repo-banner.svg
+.. image:: https://raw.githubusercontent.com/nextcord/nextcord/master/assets/repo-banner.svg
    :alt: Nextcord
 
 .. image:: https://img.shields.io/discord/881118111967883295?color=blue&label=discord
-   :target: https://discord.gg/ZebatWssCB
+   :target: https://discord.gg/nextcord
    :alt: Discord server invite
 .. image:: https://img.shields.io/pypi/v/nextcord.svg
-   :target: https://pypi.python.org/pypi/nextcord
+   :target: https://pypi.org/project/nextcord/
    :alt: PyPI version info
-.. image:: 	https://img.shields.io/pypi/dm/nextcord?color=informational&label=pypi%20downloads
-   :target: https://pypi.python.org/pypi/nextcord
+.. image:: https://img.shields.io/pypi/dm/nextcord?color=informational&label=pypi%20downloads
+   :target: https://pypi.org/project/nextcord/
    :alt: PyPI version info
 .. image:: https://img.shields.io/pypi/pyversions/nextcord.svg
-   :target: https://pypi.python.org/pypi/nextcord
+   :target: https://pypi.org/project/nextcord/
    :alt: PyPI supported Python versions
 .. image:: https://img.shields.io/readthedocs/nextcord
-   :target: https://nextcord.readthedocs.io/en/latest
+   :target: https://docs.nextcord.dev/
    :alt: Nextcord documentation
-   
+
 Nextcord
 --------
-   
+
 A modern, easy-to-use, feature-rich, and async-ready API wrapper for Discord written in Python.
 
-Fork notice
---------------------------
-
-This is a fork of discord.py, which unfortunately has been `officially discontinued <https://gist.github.com/Rapptz/4a2f62751b9600a31a0d3c78100287f1/>`_ on 28th August 2021.
-Nextcord will try to replace discord.py, with **continued support and features**, to still offer former discord.py users a stable API wrapper for their bots.   
 
 Key Features
 -------------
@@ -101,22 +96,21 @@ Quick Example
     from nextcord.ext import commands
 
 
-    bot = commands.Bot(command_prefix='$')
+    bot = commands.Bot()
 
-    @bot.command()
-    async def ping(ctx):
-        await ctx.reply('Pong!')
+    @bot.slash_command(description="Replies with pong!")
+    async def ping(interaction: nextcord.Interaction):
+        await interaction.send("Pong!", ephemeral=True)
 
-    bot.run('token')
+    bot.run("token")
 
+You can find more examples in the `examples directory <https://github.com/nextcord/nextcord/blob/stable/examples/>`_.
 
-You can find more examples in the examples directory.
-
-**NOTE:** It is not advised to leave your token directly in your code, as it allows anyone with it to access your bot. If you intend to make your code public you should `store it securely <https://github.com/nextcord/nextcord/blob/master/examples/secure_token_storage.py/>`_.
+**NOTE:** It is not advised to leave your token directly in your code, as it allows anyone with it to access your bot. If you intend to make your code public you should `store it securely <https://github.com/nextcord/nextcord/blob/stable/examples/secure_token_storage.py/>`_.
 
 Links
 ------
 
-- `Documentation <https://nextcord.readthedocs.io/en/latest/>`_
-- `Official Discord Server <https://discord.gg/ZebatWssCB>`_
+- `Documentation <https://docs.nextcord.dev/>`_
+- `Official Discord Server <https://discord.gg/nextcord>`_
 - `Discord API <https://discord.gg/discord-api>`_

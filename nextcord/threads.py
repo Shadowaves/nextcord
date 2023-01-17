@@ -1,65 +1,45 @@
-"""
-The MIT License (MIT)
-
-Copyright (c) 2015-present Rapptz
-
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-"""
+# SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Callable, Dict, Iterable, List, Optional, Union, TYPE_CHECKING
-import time
 import asyncio
+import time
+from typing import TYPE_CHECKING, Callable, Dict, Iterable, List, Optional, Union
 
-from .mixins import Hashable
+from . import channel
 from .abc import Messageable
 from .enums import ChannelType, try_enum
 from .errors import ClientException
-from .utils import MISSING, parse_time, _get_as_snowflake
+from .flags import ChannelFlags
+from .mixins import Hashable, PinsMixin
+from .utils import MISSING, get_as_snowflake, parse_time
 
 __all__ = (
-    'Thread',
-    'ThreadMember',
+    "Thread",
+    "ThreadMember",
 )
 
 if TYPE_CHECKING:
-    from .types.threads import (
-        Thread as ThreadPayload,
-        ThreadMember as ThreadMemberPayload,
-        ThreadMetadata,
-        ThreadArchiveDuration,
-    )
-    from .types.snowflake import SnowflakeList
-    from .guild import Guild
-    from .channel import TextChannel, CategoryChannel
-    from .member import Member
-    from .message import Message, PartialMessage
-    from .abc import Snowflake, SnowflakeTime
-    from .role import Role
-    from .permissions import Permissions
-    from .state import ConnectionState
     from datetime import datetime
 
+    from .abc import Snowflake, SnowflakeTime
+    from .channel import CategoryChannel, ForumChannel, ForumTag, TextChannel
+    from .guild import Guild
+    from .member import Member
+    from .message import Message, PartialMessage
+    from .permissions import Permissions
+    from .role import Role
+    from .state import ConnectionState
+    from .types.snowflake import SnowflakeList
+    from .types.threads import (
+        Thread as ThreadPayload,
+        ThreadArchiveDuration,
+        ThreadMember as ThreadMemberPayload,
+        ThreadMetadata,
+    )
 
 
-class Thread(Messageable, Hashable):
+class Thread(Messageable, Hashable, PinsMixin):
     """Represents a Discord thread.
 
     .. container:: operations
@@ -83,7 +63,7 @@ class Thread(Messageable, Hashable):
     .. versionadded:: 2.0
 
     Attributes
-    -----------
+    ----------
     name: :class:`str`
         The thread name.
     guild: :class:`Guild`
@@ -99,7 +79,7 @@ class Thread(Messageable, Hashable):
         *not* point to an existing or valid message.
     slowmode_delay: :class:`int`
         The number of seconds a member must wait between sending messages
-        in this thread. A value of `0` denotes that it is disabled.
+        in this thread. A value of ``0`` denotes that it is disabled.
         Bots and users with :attr:`~Permissions.manage_channels` or
         :attr:`~Permissions.manage_messages` bypass slowmode.
     message_count: :class:`int`
@@ -128,29 +108,35 @@ class Thread(Messageable, Hashable):
         This is ``None`` if the thread was created before January 9th, 2021.
 
         .. versionadded:: 2.0
+    applied_tag_ids: List[:class:`int`]
+        A list of tag IDs that have been applied to this thread.
+
+        .. versionadded:: 2.4
     """
 
     __slots__ = (
-        'name',
-        'id',
-        'guild',
-        '_type',
-        '_state',
-        '_members',
-        'owner_id',
-        'parent_id',
-        'last_message_id',
-        'message_count',
-        'member_count',
-        'slowmode_delay',
-        'me',
-        'locked',
-        'archived',
-        'invitable',
-        'archiver_id',
-        'auto_archive_duration',
-        'archive_timestamp',
-        'create_timestamp',
+        "name",
+        "id",
+        "guild",
+        "_type",
+        "_state",
+        "_members",
+        "owner_id",
+        "parent_id",
+        "last_message_id",
+        "message_count",
+        "member_count",
+        "slowmode_delay",
+        "me",
+        "locked",
+        "archived",
+        "invitable",
+        "archiver_id",
+        "auto_archive_duration",
+        "archive_timestamp",
+        "create_timestamp",
+        "flags",
+        "applied_tag_ids",
     )
 
     def __init__(self, *, guild: Guild, state: ConnectionState, data: ThreadPayload):
@@ -164,51 +150,57 @@ class Thread(Messageable, Hashable):
 
     def __repr__(self) -> str:
         return (
-            f'<Thread id={self.id!r} name={self.name!r} parent={self.parent}'
-            f' owner_id={self.owner_id!r} locked={self.locked} archived={self.archived}>'
+            f"<Thread id={self.id!r} name={self.name!r} parent={self.parent}"
+            f" owner_id={self.owner_id!r} locked={self.locked} archived={self.archived}>"
         )
 
     def __str__(self) -> str:
         return self.name
 
     def _from_data(self, data: ThreadPayload):
-        self.id = int(data['id'])
-        self.parent_id = int(data['parent_id'])
-        self.owner_id = int(data['owner_id'])
-        self.name = data['name']
-        self._type = try_enum(ChannelType, data['type'])
-        self.last_message_id = _get_as_snowflake(data, 'last_message_id')
-        self.slowmode_delay = data.get('rate_limit_per_user', 0)
-        self.message_count = data['message_count']
-        self.member_count = data['member_count']
-        self._unroll_metadata(data['thread_metadata'])
+        self.id = int(data["id"])
+        self.parent_id = int(data["parent_id"])
+        self.owner_id = int(data["owner_id"])
+        self.name = data["name"]
+        self._type = try_enum(ChannelType, data["type"])
+        self.last_message_id = get_as_snowflake(data, "last_message_id")
+        self.slowmode_delay = data.get("rate_limit_per_user", 0)
+        self.message_count = data["message_count"]
+        self.member_count = data["member_count"]
+        self._unroll_metadata(data["thread_metadata"])
+        self.flags: ChannelFlags = ChannelFlags._from_value(data.get("flags", 0))
 
         try:
-            member = data['member']
+            member = data["member"]
         except KeyError:
             self.me = None
         else:
             self.me = ThreadMember(self, member)
 
+        self.applied_tag_ids: List[int] = [
+            int(tag_id) for tag_id in data.get("applied_thread_tags", [])
+        ]
+
     def _unroll_metadata(self, data: ThreadMetadata):
-        self.archived = data['archived']
-        self.archiver_id = _get_as_snowflake(data, 'archiver_id')
-        self.auto_archive_duration = data['auto_archive_duration']
-        self.archive_timestamp = parse_time(data['archive_timestamp'])
-        self.locked = data.get('locked', False)
-        self.invitable = data.get('invitable', True)
-        self.create_timestamp = parse_time(data.get('create_timestamp'))
+        self.archived = data["archived"]
+        self.archiver_id = get_as_snowflake(data, "archiver_id")
+        self.auto_archive_duration = data["auto_archive_duration"]
+        self.archive_timestamp = parse_time(data["archive_timestamp"])
+        self.locked = data.get("locked", False)
+        self.invitable = data.get("invitable", True)
+        self.create_timestamp = parse_time(data.get("create_timestamp"))
 
     def _update(self, data):
         try:
-            self.name = data['name']
+            self.name = data["name"]
         except KeyError:
             pass
 
-        self.slowmode_delay = data.get('rate_limit_per_user', 0)
+        self.slowmode_delay = data.get("rate_limit_per_user", 0)
+        self.flags: ChannelFlags = ChannelFlags._from_value(data.get("flags", 0))
 
         try:
-            self._unroll_metadata(data['thread_metadata'])
+            self._unroll_metadata(data["thread_metadata"])
         except KeyError:
             pass
 
@@ -216,7 +208,7 @@ class Thread(Messageable, Hashable):
     def created_at(self) -> Optional[datetime]:
         """Optional[:class:`datetime.datetime`]: Returns the threads's creation time in UTC.
         This is ``None`` if the thread was created before January 9th, 2021.
-        
+
         .. versionadded:: 2.0
         """
         return self.create_timestamp
@@ -227,8 +219,8 @@ class Thread(Messageable, Hashable):
         return self._type
 
     @property
-    def parent(self) -> Optional[TextChannel]:
-        """Optional[:class:`TextChannel`]: The parent channel this thread belongs to."""
+    def parent(self) -> Optional[Union[TextChannel, ForumChannel]]:
+        """Optional[Union[:class:`TextChannel`, :class:`ForumChannel`]]: The parent channel this thread belongs to."""
         return self.guild.get_channel(self.parent_id)  # type: ignore
 
     @property
@@ -239,7 +231,7 @@ class Thread(Messageable, Hashable):
     @property
     def mention(self) -> str:
         """:class:`str`: The string that allows you to mention the thread."""
-        return f'<#{self.id}>'
+        return f"<#{self.id}>"
 
     @property
     def members(self) -> List[ThreadMember]:
@@ -266,7 +258,7 @@ class Thread(Messageable, Hashable):
             attribute.
 
         Returns
-        ---------
+        -------
         Optional[:class:`Message`]
             The last message in this channel or ``None`` if not found.
         """
@@ -277,7 +269,7 @@ class Thread(Messageable, Hashable):
         """The category channel the parent channel belongs to, if applicable.
 
         Raises
-        -------
+        ------
         ClientException
             The parent channel was not cached and returned ``None``.
 
@@ -289,15 +281,15 @@ class Thread(Messageable, Hashable):
 
         parent = self.parent
         if parent is None:
-            raise ClientException('Parent channel not found')
+            raise ClientException("Parent channel not found")
         return parent.category
-    
+
     @property
     def category_id(self) -> Optional[int]:
         """The category channel ID the parent channel belongs to, if applicable.
 
         Raises
-        -------
+        ------
         ClientException
             The parent channel was not cached and returned ``None``.
 
@@ -309,8 +301,42 @@ class Thread(Messageable, Hashable):
 
         parent = self.parent
         if parent is None:
-            raise ClientException('Parent channel not found')
+            raise ClientException("Parent channel not found")
         return parent.category_id
+
+    @property
+    def jump_url(self) -> str:
+        """:class:`str`: Returns a URL that allows the client to jump to this channel.
+
+        .. versionadded:: 2.0
+        """
+        return f"https://discord.com/channels/{self.guild.id}/{self.id}"
+
+    @property
+    def applied_tags(self) -> Optional[List[ForumTag]]:
+        """Optional[List[:class:`ForumTag`]]: A list of tags applied to this thread.
+
+        This is ``None`` if the parent channel was not found in cache.
+
+        .. versionadded:: 2.4
+        """
+
+        if self.parent is None:
+            return None
+
+        parent = self.parent
+
+        if not isinstance(parent, channel.ForumChannel):
+            return None
+
+        tags: List[ForumTag] = []
+
+        for tag_id in self.applied_tag_ids:
+            tag = parent.get_tag(tag_id)
+            if tag is not None:
+                tags.append(tag)
+
+        return tags
 
     def is_private(self) -> bool:
         """:class:`bool`: Whether the thread is a private thread.
@@ -354,7 +380,7 @@ class Thread(Messageable, Hashable):
             are not computed.
 
         Raises
-        -------
+        ------
         ClientException
             The parent channel was not cached and returned ``None``
 
@@ -366,7 +392,7 @@ class Thread(Messageable, Hashable):
 
         parent = self.parent
         if parent is None:
-            raise ClientException('Parent channel not found')
+            raise ClientException("Parent channel not found")
         return parent.permissions_for(obj)
 
     async def delete_messages(self, messages: Iterable[Snowflake]) -> None:
@@ -388,7 +414,7 @@ class Thread(Messageable, Hashable):
         Usable only by bot accounts.
 
         Parameters
-        -----------
+        ----------
         messages: Iterable[:class:`abc.Snowflake`]
             An iterable of messages denoting which ones to bulk delete.
 
@@ -416,7 +442,7 @@ class Thread(Messageable, Hashable):
             return
 
         if len(messages) > 100:
-            raise ClientException('Can only bulk delete messages up to 100 messages')
+            raise ClientException("Can only bulk delete messages up to 100 messages")
 
         message_ids: SnowflakeList = [m.id for m in messages]
         await self._state.http.delete_messages(self.id, message_ids)
@@ -444,7 +470,7 @@ class Thread(Messageable, Hashable):
         also needed to retrieve message history.
 
         Examples
-        ---------
+        --------
 
         Deleting bot's messages ::
 
@@ -455,7 +481,7 @@ class Thread(Messageable, Hashable):
             await thread.send(f'Deleted {len(deleted)} message(s)')
 
         Parameters
-        -----------
+        ----------
         limit: Optional[:class:`int`]
             The number of messages to search through. This is not the number
             of messages that will be deleted, though it can be.
@@ -476,14 +502,14 @@ class Thread(Messageable, Hashable):
             fall back to single delete if messages are older than two weeks.
 
         Raises
-        -------
+        ------
         Forbidden
             You do not have proper permissions to do the actions required.
         HTTPException
             Purging the messages failed.
 
         Returns
-        --------
+        -------
         List[:class:`.Message`]
             The list of messages that were deleted.
         """
@@ -491,7 +517,9 @@ class Thread(Messageable, Hashable):
         if check is MISSING:
             check = lambda m: True
 
-        iterator = self.history(limit=limit, before=before, after=after, oldest_first=oldest_first, around=around)
+        iterator = self.history(
+            limit=limit, before=before, after=after, oldest_first=oldest_first, around=around
+        )
         ret: List[Message] = []
         count = 0
 
@@ -547,6 +575,8 @@ class Thread(Messageable, Hashable):
         invitable: bool = MISSING,
         slowmode_delay: int = MISSING,
         auto_archive_duration: ThreadArchiveDuration = MISSING,
+        flags: ChannelFlags = MISSING,
+        applied_tags: List[ForumTag] = MISSING,
     ) -> Thread:
         """|coro|
 
@@ -560,7 +590,7 @@ class Thread(Messageable, Hashable):
         The thread must be unarchived to be edited.
 
         Parameters
-        ------------
+        ----------
         name: :class:`str`
             The new name of the thread.
         archived: :class:`bool`
@@ -576,32 +606,44 @@ class Thread(Messageable, Hashable):
         slowmode_delay: :class:`int`
             Specifies the slowmode rate limit for user in this thread, in seconds.
             A value of ``0`` disables slowmode. The maximum value possible is ``21600``.
+        flags: :class:`ChannelFlags`
+            The new channel flags to use for this thread.
+
+            .. versionadded:: 2.1
+        applied_tags: List[:class:`ForumTag`]
+            The new tags to apply to this thread.
+
+            .. versionadded:: 2.4
 
         Raises
-        -------
+        ------
         Forbidden
             You do not have permissions to edit the thread.
         HTTPException
             Editing the thread failed.
 
         Returns
-        --------
+        -------
         :class:`Thread`
             The newly edited thread.
         """
         payload = {}
         if name is not MISSING:
-            payload['name'] = str(name)
+            payload["name"] = str(name)
         if archived is not MISSING:
-            payload['archived'] = archived
+            payload["archived"] = archived
         if auto_archive_duration is not MISSING:
-            payload['auto_archive_duration'] = auto_archive_duration
+            payload["auto_archive_duration"] = auto_archive_duration
         if locked is not MISSING:
-            payload['locked'] = locked
+            payload["locked"] = locked
         if invitable is not MISSING:
-            payload['invitable'] = invitable
+            payload["invitable"] = invitable
         if slowmode_delay is not MISSING:
-            payload['rate_limit_per_user'] = slowmode_delay
+            payload["rate_limit_per_user"] = slowmode_delay
+        if flags is not MISSING:
+            payload["flags"] = flags.value
+        if applied_tags is not MISSING:
+            payload["applied_tags"] = [tag.id for tag in applied_tags]
 
         data = await self._state.http.edit_channel(self.id, **payload)
         # The data payload will always be a Thread payload
@@ -616,7 +658,7 @@ class Thread(Messageable, Hashable):
         If the thread is private, :attr:`~Permissions.manage_threads` is also needed.
 
         Raises
-        -------
+        ------
         Forbidden
             You do not have permissions to join the thread.
         HTTPException
@@ -630,7 +672,7 @@ class Thread(Messageable, Hashable):
         Leaves this thread.
 
         Raises
-        -------
+        ------
         HTTPException
             Leaving the thread failed.
         """
@@ -647,12 +689,12 @@ class Thread(Messageable, Hashable):
         is required to add a user to the thread.
 
         Parameters
-        -----------
+        ----------
         user: :class:`abc.Snowflake`
             The user to add to the thread.
 
         Raises
-        -------
+        ------
         Forbidden
             You do not have permissions to add the user to the thread.
         HTTPException
@@ -668,12 +710,12 @@ class Thread(Messageable, Hashable):
         You must have :attr:`~Permissions.manage_threads` or be the creator of the thread to remove a user.
 
         Parameters
-        -----------
+        ----------
         user: :class:`abc.Snowflake`
             The user to add to the thread.
 
         Raises
-        -------
+        ------
         Forbidden
             You do not have permissions to remove the user from the thread.
         HTTPException
@@ -690,12 +732,12 @@ class Thread(Messageable, Hashable):
         other than yourself.
 
         Raises
-        -------
+        ------
         HTTPException
             Retrieving the members failed.
 
         Returns
-        --------
+        -------
         List[:class:`ThreadMember`]
             All thread members in the thread.
         """
@@ -711,7 +753,7 @@ class Thread(Messageable, Hashable):
         You must have :attr:`~Permissions.manage_threads` to delete threads.
 
         Raises
-        -------
+        ------
         Forbidden
             You do not have permissions to delete this thread.
         HTTPException
@@ -728,12 +770,12 @@ class Thread(Messageable, Hashable):
         .. versionadded:: 2.0
 
         Parameters
-        ------------
+        ----------
         message_id: :class:`int`
             The message ID to create a partial message for.
 
         Returns
-        ---------
+        -------
         :class:`PartialMessage`
             The partial message.
         """
@@ -773,7 +815,7 @@ class ThreadMember(Hashable):
     .. versionadded:: 2.0
 
     Attributes
-    -----------
+    ----------
     id: :class:`int`
         The thread member's ID.
     thread_id: :class:`int`
@@ -783,12 +825,12 @@ class ThreadMember(Hashable):
     """
 
     __slots__ = (
-        'id',
-        'thread_id',
-        'joined_at',
-        'flags',
-        '_state',
-        'parent',
+        "id",
+        "thread_id",
+        "joined_at",
+        "flags",
+        "_state",
+        "parent",
     )
 
     def __init__(self, parent: Thread, data: ThreadMemberPayload):
@@ -797,24 +839,39 @@ class ThreadMember(Hashable):
         self._from_data(data)
 
     def __repr__(self) -> str:
-        return f'<ThreadMember id={self.id} thread_id={self.thread_id} joined_at={self.joined_at!r}>'
+        return (
+            f"<ThreadMember id={self.id} thread_id={self.thread_id} joined_at={self.joined_at!r}>"
+        )
 
     def _from_data(self, data: ThreadMemberPayload):
         try:
-            self.id = int(data['user_id'])
+            self.id = int(data["user_id"])
         except KeyError:
             assert self._state.self_id is not None
             self.id = self._state.self_id
 
         try:
-            self.thread_id = int(data['id'])
+            self.thread_id = int(data["id"])
         except KeyError:
             self.thread_id = self.parent.id
 
-        self.joined_at = parse_time(data['join_timestamp'])
-        self.flags = data['flags']
+        self.joined_at = parse_time(data["join_timestamp"])
+        self.flags = data["flags"]
 
     @property
     def thread(self) -> Thread:
         """:class:`Thread`: The thread this member belongs to."""
         return self.parent
+
+    @property
+    def member(self) -> Optional[Member]:
+        """Optional[:class:`Member`]: The :class:`Member` of this thread member."""
+        return self.parent.guild.get_member(self.id)
+
+    async def fetch_member(self) -> Member:
+        """:class:`Member`: Retrieves the :class:`Member` of this thread member.
+
+        .. note::
+            This method is an API call. If you have :attr:`Intents.members` and members cache enabled, consider :attr:`member` instead.
+        """
+        return await self.parent.guild.fetch_member(self.id)

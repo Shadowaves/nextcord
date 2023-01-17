@@ -1,7 +1,7 @@
 .. currentmodule:: nextcord
 
 API Reference
-===============
+=============
 
 The following section outlines the API of nextcord.
 
@@ -14,7 +14,7 @@ The following section outlines the API of nextcord.
     nextcord.
 
 Version Related Info
----------------------
+--------------------
 
 There are two main ways to query version information about the library. For guarantees, check :ref:`version_guarantees`.
 
@@ -31,10 +31,10 @@ There are two main ways to query version information about the library. For guar
     off of :pep:`440`.
 
 Clients
---------
+-------
 
 Client
-~~~~~~~
+~~~~~~
 
 .. attributetable:: Client
 
@@ -47,10 +47,10 @@ Client
 
     .. automethod:: Client.slash_command
         :decorator:
-    
+
     .. automethod:: Client.user_command
         :decorator:
-        
+
     .. automethod:: Client.message_command
         :decorator:
 
@@ -58,7 +58,7 @@ Client
         :async-for:
 
 AutoShardedClient
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 .. attributetable:: AutoShardedClient
 
@@ -66,10 +66,10 @@ AutoShardedClient
     :members:
 
 Application Info
-------------------
+----------------
 
 AppInfo
-~~~~~~~~
+~~~~~~~
 
 .. attributetable:: AppInfo
 
@@ -77,7 +77,7 @@ AppInfo
     :members:
 
 PartialAppInfo
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 .. attributetable:: PartialAppInfo
 
@@ -85,7 +85,7 @@ PartialAppInfo
     :members:
 
 Team
-~~~~~
+~~~~
 
 .. attributetable:: Team
 
@@ -93,7 +93,7 @@ Team
     :members:
 
 TeamMember
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. attributetable:: TeamMember
 
@@ -101,10 +101,10 @@ TeamMember
     :members:
 
 Voice Related
----------------
+-------------
 
 VoiceClient
-~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: VoiceClient
 
@@ -113,7 +113,7 @@ VoiceClient
     :exclude-members: connect, on_voice_state_update, on_voice_server_update
 
 VoiceProtocol
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 .. attributetable:: VoiceProtocol
 
@@ -121,7 +121,7 @@ VoiceProtocol
     :members:
 
 AudioSource
-~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: AudioSource
 
@@ -129,7 +129,7 @@ AudioSource
     :members:
 
 PCMAudio
-~~~~~~~~~
+~~~~~~~~
 
 .. attributetable:: PCMAudio
 
@@ -137,7 +137,7 @@ PCMAudio
     :members:
 
 FFmpegAudio
-~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: FFmpegAudio
 
@@ -145,7 +145,7 @@ FFmpegAudio
     :members:
 
 FFmpegPCMAudio
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 .. attributetable:: FFmpegPCMAudio
 
@@ -153,7 +153,7 @@ FFmpegPCMAudio
     :members:
 
 FFmpegOpusAudio
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 .. attributetable:: FFmpegOpusAudio
 
@@ -161,7 +161,7 @@ FFmpegOpusAudio
     :members:
 
 PCMVolumeTransformer
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: PCMVolumeTransformer
 
@@ -169,7 +169,7 @@ PCMVolumeTransformer
     :members:
 
 Opus Library
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. autofunction:: nextcord.opus.load_opus
 
@@ -306,6 +306,10 @@ to handle it, which defaults to print a traceback and ignoring the exception.
         exception.
     :param kwargs: The keyword arguments for the event that raised the
         exception.
+
+.. function:: on_close()
+
+    Called when the client is exiting the event loop and shutting down.
 
 .. function:: on_socket_event_type(event_type)
 
@@ -1162,6 +1166,42 @@ to handle it, which defaults to print a traceback and ignoring the exception.
     :param user: The user that interested.
     :type user: :class:`ScheduledEventUser`
 
+.. function:: on_auto_moderation_rule_create(rule)
+
+    Called when an :class:`AutoModerationRule` is created.
+
+    .. versionadded:: 2.1
+
+    :param rule: The rule that was created.
+    :type rule: :class:`AutoModerationRule`
+
+.. function:: on_auto_moderation_rule_update(rule)
+
+    Called when an :class:`AutoModerationRule` is edited.
+
+    .. versionadded:: 2.1
+
+    :param rule: The newly edited rule.
+    :type rule: :class:`AutoModerationRule`
+
+.. function:: on_auto_moderation_rule_delete(rule)
+
+    Called when a :class:`AutoModerationRule` is deleted.
+
+    .. versionadded:: 2.1
+
+    :param rule: The deleted rule.
+    :type rule: :class:`AutoModerationRule`
+
+.. function:: on_auto_moderation_action_execution(execution)
+
+    Called when an :class:`AutoModerationAction` is executed.
+
+    .. versionadded:: 2.1
+
+    :param execution: The object containing the execution information.
+    :type execution: :class:`AutoModerationActionExecution`
+
 .. _discord-api-utils:
 
 Utility Functions
@@ -1181,6 +1221,12 @@ Utility Functions
 
 .. autofunction:: nextcord.utils.escape_mentions
 
+.. autofunction:: nextcord.utils.parse_raw_mentions
+
+.. autofunction:: nextcord.utils.parse_raw_role_mentions
+
+.. autofunction:: nextcord.utils.parse_raw_channel_mentions
+
 .. autofunction:: nextcord.utils.resolve_invite
 
 .. autofunction:: nextcord.utils.resolve_template
@@ -1196,7 +1242,7 @@ Utility Functions
 .. _discord-api-enums:
 
 Enumerations
--------------
+------------
 
 The API provides some enumerations for certain types of strings to avoid the API
 from being stringly typed in case the strings change in the future.
@@ -1227,10 +1273,6 @@ of :class:`enum.Enum`.
 
         A guild news channel.
 
-    .. attribute:: store
-
-        A guild store channel.
-
     .. attribute:: stage_voice
 
         A guild stage voice channel.
@@ -1254,6 +1296,18 @@ of :class:`enum.Enum`.
         A private thread
 
         .. versionadded:: 2.0
+
+    .. attribute:: guild_directory
+
+        A channel containing the guilds in a `Student Hub <https://support.discord.com/hc/en-us/articles/4406046651927-Discord-Student-Hubs-FAQ>`_
+
+        .. versionadded:: 2.2
+
+    .. attribute:: forum
+
+        A forum channel.
+
+        .. versionadded:: 2.1
 
 .. class:: MessageType
 
@@ -1359,14 +1413,9 @@ of :class:`enum.Enum`.
         The system message denoting that the author is replying to a message.
 
         .. versionadded:: 2.0
-    .. attribute:: application_command
+    .. attribute:: chat_input_command
 
-        The system message denoting that an application (or "slash") command was executed.
-
-        .. versionadded:: 2.0
-    .. attribute:: guild_invite_reminder
-
-        The system message sent as a reminder to invite people to the guild.
+        The system message denoting that a slash command was executed.
 
         .. versionadded:: 2.0
     .. attribute:: thread_starter_message
@@ -1375,6 +1424,21 @@ of :class:`enum.Enum`.
         thread's conversation topic.
 
         .. versionadded:: 2.0
+    .. attribute:: guild_invite_reminder
+
+        The system message sent as a reminder to invite people to the guild.
+
+        .. versionadded:: 2.0
+    .. attribute:: context_menu_command
+
+        The system message denoting that a context menu command was executed.
+
+        .. versionadded:: 2.0
+    .. attribute:: auto_moderation_action
+
+        The system message denoting that an auto moderation action was executed
+
+        .. versionadded:: 2.1
 
 .. class:: UserFlags
 
@@ -1431,9 +1495,19 @@ of :class:`enum.Enum`.
     .. attribute:: discord_certified_moderator
 
         The user is a Discord Certified Moderator.
+    .. attribute:: bot_http_interactions
+
+        The user is a bot that uses only HTTP interactions and is shown in the online member list.
+
+        .. versionadded:: 2.4
     .. attribute:: known_spammer
 
         The user is a Known Spammer.
+    .. attribute:: active_developer
+
+        The user is an Active Developer.
+
+        .. versionadded:: 2.4
 
 .. class:: ActivityType
 
@@ -1475,10 +1549,16 @@ of :class:`enum.Enum`.
         Represents Discord pinging to see if the interaction response server is alive.
     .. attribute:: application_command
 
-        Represents a slash command interaction.
+        Represents a slash command or context menu interaction.
     .. attribute:: component
 
         Represents a component based interaction, i.e. using the Discord Bot UI Kit.
+    .. attribute:: application_command_autocomplete
+
+        Represents a slash command autocomplete interaction.
+    .. attribute:: modal_submit
+
+        Represents a modal submit interaction.
 
 .. class:: InteractionResponseType
 
@@ -1527,7 +1607,33 @@ of :class:`enum.Enum`.
         Represents a button component.
     .. attribute:: select
 
-        Represents a select component.
+        Represents a string select component.
+    .. attribute:: text_input
+
+        Represents a text input component.
+    .. attribute:: user_select
+
+        Represents a user select component.
+
+        .. versionadded:: 2.3
+
+    .. attribute:: role_select
+
+        Represents a role select component.
+
+        .. versionadded:: 2.3
+
+    .. attribute:: mentionable_select
+
+        Represents a mentionable select component.
+
+        .. versionadded:: 2.3
+
+    .. attribute:: channel_select
+
+        Represents a channel select component.
+
+        .. versionadded:: 2.3
 
 
 .. class:: ButtonStyle
@@ -1570,6 +1676,17 @@ of :class:`enum.Enum`.
     .. attribute:: url
 
         An alias for :attr:`link`.
+
+.. class:: TextInputStyle
+
+    Represent the style of a text input component.
+
+    .. attribute:: short
+
+        Represent a single line input
+    .. attribute:: paragraph
+
+        Represent a multi line input
 
 .. class:: VoiceRegion
 
@@ -2443,6 +2560,117 @@ of :class:`enum.Enum`.
 
         .. versionadded:: 2.0
 
+    .. attribute:: auto_moderation_rule_create
+
+        An auto moderation rule was created.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.target` is
+        the :class:`AutoModerationRule` or :class:`Object` with the ID of the
+        rule which was created.
+
+        Possible attributes for :class:`AuditLogDiff`:
+
+        - :attr:`~AuditLogDiff.actions`
+        - :attr:`~AuditLogDiff.enabled`
+        - :attr:`~AuditLogDiff.exempt_channels`
+        - :attr:`~AuditLogDiff.exempt_roles`
+        - :attr:`~AuditLogDiff.event_type`
+        - :attr:`~AuditLogDiff.name`
+        - :attr:`~AuditLogDiff.trigger_type`
+        - :attr:`~AuditLogDiff.trigger_metadata`
+
+        .. versionadded:: 2.1
+
+    .. attribute:: auto_moderation_rule_update
+
+        An auto moderation rule was updated.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.target` is
+        the :class:`AutoModerationRule` or :class:`Object` with the ID of the
+        rule which was updated.
+
+        Possible attributes for :class:`AuditLogDiff`:
+
+        - :attr:`~AuditLogDiff.actions`
+        - :attr:`~AuditLogDiff.enabled`
+        - :attr:`~AuditLogDiff.exempt_channels`
+        - :attr:`~AuditLogDiff.exempt_roles`
+        - :attr:`~AuditLogDiff.event_type`
+        - :attr:`~AuditLogDiff.name`
+        - :attr:`~AuditLogDiff.trigger_type`
+        - :attr:`~AuditLogDiff.trigger_metadata`
+
+        .. versionadded:: 2.1
+
+    .. attribute:: auto_moderation_rule_delete
+
+        An auto moderation rule was deleted.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.target` is
+        the :class:`AutoModerationRule` or :class:`Object` with the ID of the
+        rule which was deleted.
+
+        Possible attributes for :class:`AuditLogDiff`:
+
+        - :attr:`~AuditLogDiff.actions`
+        - :attr:`~AuditLogDiff.enabled`
+        - :attr:`~AuditLogDiff.exempt_channels`
+        - :attr:`~AuditLogDiff.exempt_roles`
+        - :attr:`~AuditLogDiff.event_type`
+        - :attr:`~AuditLogDiff.name`
+        - :attr:`~AuditLogDiff.trigger_type`
+        - :attr:`~AuditLogDiff.trigger_metadata`
+
+        .. versionadded:: 2.1
+
+    .. attribute:: auto_moderation_block_message
+
+        A message was blocked by an auto moderation rule.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.target` is
+        the :class:`Member` or :class:`User` whose message was blocked.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.extra` is
+        set to an unspecified proxy object with these three attributes:
+
+        - ``channel``: A :class:`~abc.GuildChannel`, :class:`Thread` or :class:`Object` with the channel ID where the message was blocked.
+        - ``rule_name``: A :class:`str` with the name of the rule.
+        - ``rule_trigger_type``: A :class:`AutoModerationTriggerType` value with the trigger type of the rule.
+
+        .. versionadded:: 2.1
+
+    .. attribute:: auto_moderation_flag_to_channel
+
+        A message was flagged by an auto moderation rule.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.target` is
+        the :class:`Member` or :class:`User` whose message was flagged.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.extra` is
+        set to an unspecified proxy object with these three attributes:
+
+        - ``channel``: A :class:`~abc.GuildChannel`, :class:`Thread` or :class:`Object` with the channel ID where the message was flagged.
+        - ``rule_name``: A :class:`str` with the name of the rule.
+        - ``rule_trigger_type``: A :class:`AutoModerationTriggerType` value with the trigger type of the rule.
+
+        .. versionadded:: 2.3
+
+    .. attribute:: auto_moderation_user_communication_disabled
+
+        A member was timed out by an auto moderation rule.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.target` is
+        the :class:`Member` or :class:`User` who was timed out.
+
+        When this is the action, the type of :attr:`~AuditLogEntry.extra` is
+        set to an unspecified proxy object with these three attributes:
+
+        - ``channel``: A :class:`~abc.GuildChannel`, :class:`Thread` or :class:`Object` with the channel ID where the member was timed out.
+        - ``rule_name``: A :class:`str` with the name of the rule.
+        - ``rule_trigger_type``: A :class:`AutoModerationTriggerType` value with the trigger type of the rule.
+
+        .. versionadded:: 2.3
+
 .. class:: AuditLogActionCategory
 
     Represents the category that the :class:`AuditLogAction` belongs to.
@@ -2714,8 +2942,104 @@ of :class:`enum.Enum`.
 
         An alias for :attr:`canceled`.
 
+.. autoclass:: Locale
+    :members:
+
+.. class:: AutoModerationEventType
+
+    Represents what event context an auto moderation rule will be checked.
+
+    .. versionadded:: 2.1
+
+    .. attribute:: message_send
+
+        A member sends or edits a message in the guild.
+
+.. class:: AutoModerationTriggerType
+
+    Represents the type of content which can trigger an auto moderation rule.
+
+    .. versionadded:: 2.1
+
+    .. versionchanged:: 2.2
+
+        Removed ``harmful_link`` as it is no longer used by Discord.
+
+    .. attribute:: keyword
+
+        This rule checks if content contains words from a user defined list of keywords.
+
+    .. attribute:: spam
+
+        This rule checks if content represents generic spam.
+
+    .. attribute:: keyword_preset
+
+        This rule checks if content contains words from Discord pre-defined wordsets.
+
+    .. attribute:: mention_spam
+
+        This rule checks if the number of mentions in the message is more than the maximum allowed.
+
+        .. versionadded:: 2.3
+
+.. class:: KeywordPresetType
+
+    Represents the type of a keyword preset auto moderation rule.
+
+    .. versionadded:: 2.1
+
+    .. attribute:: profanity
+
+        Words that may be considered forms of swearing or cursing.
+
+    .. attribute:: sexual_content
+
+        Words that refer to sexually explicit behaviour or activity.
+
+    .. attribute:: slurs
+
+        Personal insults or words that may be considered hate speech.
+
+.. class:: AutoModerationActionType
+
+    Represents the action that will be taken if an auto moderation rule is triggered.
+
+    .. versionadded:: 2.1
+
+    .. attribute:: block_message
+
+        Blocks a message with content matching the rule.
+
+    .. attribute:: send_alert_message
+
+        Logs message content to a specified channel.
+
+    .. attribute:: timeout
+
+        Timeout user for a specified duration.
+
+        .. note::
+
+            This action type can only be used with the :attr:`Permissions.moderate_members` permission.
+
+.. class:: SortOrderType
+
+    .. versionadded:: 2.3
+
+    The default sort order type used to sort posts in a :class:`ForumChannel`.
+
+    .. attribute:: latest_activity
+
+        Sort forum posts by their activity.
+
+    .. attribute:: creation_date
+
+        Sort forum posts by their creation date.
+
+
 Async Iterator
-----------------
+--------------
 
 Some API functions return an "async iterator". An async iterator is something that is
 capable of being used in an :ref:`async for statement <py:async for>`.
@@ -2846,14 +3170,14 @@ Certain utilities make working with async iterators easier, detailed below.
 .. _discord-api-audit-logs:
 
 Audit Log Data
-----------------
+--------------
 
 Working with :meth:`Guild.audit_logs` is a complicated process with a lot of machinery
 involved. The library attempts to make it easy to use and friendly. To accomplish
 this goal, it must make use of a couple of data classes that aid in this goal.
 
 AuditLogEntry
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 .. attributetable:: AuditLogEntry
 
@@ -2861,7 +3185,7 @@ AuditLogEntry
     :members:
 
 AuditLogChanges
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 .. attributetable:: AuditLogChanges
 
@@ -2910,7 +3234,7 @@ AuditLogChanges
         +----------------------------------------+--------------------------------------------------+
 
 AuditLogDiff
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. attributetable:: AuditLogDiff
 
@@ -3362,16 +3686,62 @@ AuditLogDiff
 
         :type: :class:`int`
 
+    .. attribute:: enabled
+
+        Whether something was enabled or disabled.
+
+        :type: :class:`bool`
+
+    .. attribute:: trigger_type
+
+        The trigger type of an auto moderation rule being changed.
+
+        :type: :class:`AutoModerationTriggerType`
+
+    .. attribute:: event_type
+
+        The event type of an auto moderation rule being changed.
+
+        :type: :class:`AutoModerationEventType`
+
+    .. attribute:: actions
+
+        The list of actions being changed.
+
+        :type: List[:class:`AutoModerationAction`]
+
+    .. attribute:: trigger_metadata
+
+        The trigger metadata of an auto moderation rule being changed.
+
+        :type: :class:`AutoModTriggerMetadata`
+
+    .. attribute:: exempt_roles
+
+        The list of roles that are exempt from an auto moderation rule being changed.
+
+        If a role is not found then it is an :class:`Object` with the ID set.
+
+        :type: List[Union[:class:`Role`, :class:`Object`]]
+
+    .. attribute:: exempt_channels
+
+        The list of channels that are exempt from an auto moderation rule being changed.
+
+        If a channel is not found then it is an :class:`Object` with the ID set.
+
+        :type: List[Union[:class:`abc.GuildChannel`, :class:`Object`]]
+
 .. this is currently missing the following keys: reason and application_id
    I'm not sure how to about porting these
 
 Webhook Support
-------------------
+---------------
 
 nextcord offers support for creating, editing, and executing webhooks through the :class:`Webhook` class.
 
 Webhook
-~~~~~~~~~
+~~~~~~~
 
 .. attributetable:: Webhook
 
@@ -3380,7 +3750,7 @@ Webhook
     :inherited-members:
 
 WebhookMessage
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 .. attributetable:: WebhookMessage
 
@@ -3388,7 +3758,7 @@ WebhookMessage
     :members:
 
 SyncWebhook
-~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: SyncWebhook
 
@@ -3397,7 +3767,7 @@ SyncWebhook
     :inherited-members:
 
 SyncWebhookMessage
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: SyncWebhookMessage
 
@@ -3407,7 +3777,7 @@ SyncWebhookMessage
 .. _discord_api_abcs:
 
 Abstract Base Classes
------------------------
+---------------------
 
 An :term:`abstract base class` (also known as an ``abc``) is a class that models can inherit
 to get their behaviour. **Abstract base classes should not be instantiated**.
@@ -3417,7 +3787,7 @@ This library has a module related to abstract base classes, in which all the ABC
 :class:`typing.Protocol`.
 
 Snowflake
-~~~~~~~~~~
+~~~~~~~~~
 
 .. attributetable:: nextcord.abc.Snowflake
 
@@ -3425,7 +3795,7 @@ Snowflake
     :members:
 
 User
-~~~~~
+~~~~
 
 .. attributetable:: nextcord.abc.User
 
@@ -3433,7 +3803,7 @@ User
     :members:
 
 PrivateChannel
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 .. attributetable:: nextcord.abc.PrivateChannel
 
@@ -3441,7 +3811,7 @@ PrivateChannel
     :members:
 
 GuildChannel
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. attributetable:: nextcord.abc.GuildChannel
 
@@ -3449,7 +3819,7 @@ GuildChannel
     :members:
 
 Messageable
-~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: nextcord.abc.Messageable
 
@@ -3464,7 +3834,7 @@ Messageable
         :async-with:
 
 Connectable
-~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: nextcord.abc.Connectable
 
@@ -3473,7 +3843,7 @@ Connectable
 .. _discord_api_models:
 
 Discord Models
----------------
+--------------
 
 Models are classes that are received from Discord and are not meant to be created by
 the user of the library.
@@ -3498,7 +3868,7 @@ the user of the library.
 
 
 ClientUser
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. attributetable:: ClientUser
 
@@ -3507,7 +3877,7 @@ ClientUser
     :inherited-members:
 
 User
-~~~~~
+~~~~
 
 .. attributetable:: User
 
@@ -3523,7 +3893,7 @@ User
         :async-with:
 
 Attachment
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. attributetable:: Attachment
 
@@ -3547,43 +3917,9 @@ Message
 .. autoclass:: Message()
     :members:
 
-Component
-~~~~~~~~~~
-
-.. attributetable:: Component
-
-.. autoclass:: Component()
-    :members:
-
-ActionRow
-~~~~~~~~~~
-
-.. attributetable:: ActionRow
-
-.. autoclass:: ActionRow()
-    :members:
-
-Button
-~~~~~~~
-
-.. attributetable:: Button
-
-.. autoclass:: Button()
-    :members:
-    :inherited-members:
-
-SelectMenu
-~~~~~~~~~~~
-
-.. attributetable:: SelectMenu
-
-.. autoclass:: SelectMenu()
-    :members:
-    :inherited-members:
-
 
 DeletedReferencedMessage
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: DeletedReferencedMessage
 
@@ -3592,7 +3928,7 @@ DeletedReferencedMessage
 
 
 Reaction
-~~~~~~~~~
+~~~~~~~~
 
 .. attributetable:: Reaction
 
@@ -3604,7 +3940,7 @@ Reaction
         :async-for:
 
 Guild
-~~~~~~
+~~~~~
 
 .. attributetable:: Guild
 
@@ -3635,7 +3971,7 @@ Guild
 
 
 Integration
-~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. autoclass:: Integration()
     :members:
@@ -3653,7 +3989,7 @@ Integration
     :members:
 
 Interaction
-~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: Interaction
 
@@ -3661,7 +3997,7 @@ Interaction
     :members:
 
 InteractionResponse
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: InteractionResponse
 
@@ -3669,11 +4005,29 @@ InteractionResponse
     :members:
 
 InteractionMessage
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: InteractionMessage
 
 .. autoclass:: InteractionMessage()
+    :members:
+    :inherited-members:
+
+PartialInteractionMessage
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. attributetable:: PartialInteractionMessage
+
+.. autoclass:: PartialInteractionMessage()
+    :members:
+    :inherited-members:
+
+MessageInteraction
+~~~~~~~~~~~~~~~~~~
+
+.. attributetable:: MessageInteraction
+
+.. autoclass:: MessageInteraction()
     :members:
 
 Member
@@ -3693,7 +4047,7 @@ Member
         :async-with:
 
 Spotify
-~~~~~~~~
+~~~~~~~
 
 .. attributetable:: Spotify
 
@@ -3701,7 +4055,7 @@ Spotify
     :members:
 
 VoiceState
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. attributetable:: VoiceState
 
@@ -3718,7 +4072,7 @@ Emoji
     :inherited-members:
 
 PartialEmoji
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. attributetable:: PartialEmoji
 
@@ -3727,7 +4081,7 @@ PartialEmoji
     :inherited-members:
 
 Role
-~~~~~
+~~~~
 
 .. attributetable:: Role
 
@@ -3735,7 +4089,7 @@ Role
     :members:
 
 RoleTags
-~~~~~~~~~~
+~~~~~~~~
 
 .. attributetable:: RoleTags
 
@@ -3743,7 +4097,7 @@ RoleTags
     :members:
 
 PartialMessageable
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: PartialMessageable
 
@@ -3752,7 +4106,7 @@ PartialMessageable
     :inherited-members:
 
 TextChannel
-~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: TextChannel
 
@@ -3768,7 +4122,7 @@ TextChannel
         :async-with:
 
 Thread
-~~~~~~~~
+~~~~~~
 
 .. attributetable:: Thread
 
@@ -3784,24 +4138,15 @@ Thread
         :async-with:
 
 ThreadMember
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. attributetable:: ThreadMember
 
 .. autoclass:: ThreadMember()
     :members:
 
-StoreChannel
-~~~~~~~~~~~~~
-
-.. attributetable:: StoreChannel
-
-.. autoclass:: StoreChannel()
-    :members:
-    :inherited-members:
-
 VoiceChannel
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. attributetable:: VoiceChannel
 
@@ -3810,7 +4155,7 @@ VoiceChannel
     :inherited-members:
 
 StageChannel
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. attributetable:: StageChannel
 
@@ -3820,7 +4165,7 @@ StageChannel
 
 
 StageInstance
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 .. attributetable:: StageInstance
 
@@ -3828,7 +4173,7 @@ StageInstance
     :members:
 
 CategoryChannel
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 .. attributetable:: CategoryChannel
 
@@ -3868,8 +4213,17 @@ GroupChannel
     .. automethod:: typing
         :async-with:
 
+ForumChannel
+~~~~~~~~~~~~
+
+.. attributetable:: ForumChannel
+
+.. autoclass:: ForumChannel()
+    :members:
+    :inherited-members:
+
 PartialInviteGuild
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: PartialInviteGuild
 
@@ -3877,7 +4231,7 @@ PartialInviteGuild
     :members:
 
 PartialInviteChannel
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: PartialInviteChannel
 
@@ -3885,7 +4239,7 @@ PartialInviteChannel
     :members:
 
 Invite
-~~~~~~~
+~~~~~~
 
 .. attributetable:: Invite
 
@@ -3893,7 +4247,7 @@ Invite
     :members:
 
 Template
-~~~~~~~~~
+~~~~~~~~
 
 .. attributetable:: Template
 
@@ -3901,7 +4255,7 @@ Template
     :members:
 
 WidgetChannel
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 .. attributetable:: WidgetChannel
 
@@ -3909,7 +4263,7 @@ WidgetChannel
     :members:
 
 WidgetMember
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. attributetable:: WidgetMember
 
@@ -3918,7 +4272,7 @@ WidgetMember
     :inherited-members:
 
 Widget
-~~~~~~~
+~~~~~~
 
 .. attributetable:: Widget
 
@@ -3926,7 +4280,7 @@ Widget
     :members:
 
 StickerPack
-~~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: StickerPack
 
@@ -3934,7 +4288,7 @@ StickerPack
     :members:
 
 StickerItem
-~~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: StickerItem
 
@@ -3942,7 +4296,7 @@ StickerItem
     :members:
 
 Sticker
-~~~~~~~~~~~~~~~
+~~~~~~~
 
 .. attributetable:: Sticker
 
@@ -3950,7 +4304,7 @@ Sticker
     :members:
 
 StandardSticker
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 .. attributetable:: StandardSticker
 
@@ -3958,7 +4312,7 @@ StandardSticker
     :members:
 
 GuildSticker
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. attributetable:: GuildSticker
 
@@ -3966,7 +4320,7 @@ GuildSticker
     :members:
 
 RawTypingEvent
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 .. attributetable:: RawTypingEvent
 
@@ -3974,7 +4328,7 @@ RawTypingEvent
     :members:
 
 RawMessageDeleteEvent
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: RawMessageDeleteEvent
 
@@ -3982,7 +4336,7 @@ RawMessageDeleteEvent
     :members:
 
 RawBulkMessageDeleteEvent
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: RawBulkMessageDeleteEvent
 
@@ -3990,7 +4344,7 @@ RawBulkMessageDeleteEvent
     :members:
 
 RawMessageUpdateEvent
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: RawMessageUpdateEvent
 
@@ -3998,7 +4352,7 @@ RawMessageUpdateEvent
     :members:
 
 RawReactionActionEvent
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: RawReactionActionEvent
 
@@ -4006,7 +4360,7 @@ RawReactionActionEvent
     :members:
 
 RawReactionClearEvent
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: RawReactionClearEvent
 
@@ -4014,7 +4368,7 @@ RawReactionClearEvent
     :members:
 
 RawReactionClearEmojiEvent
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: RawReactionClearEmojiEvent
 
@@ -4022,7 +4376,7 @@ RawReactionClearEmojiEvent
     :members:
 
 RawIntegrationDeleteEvent
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: RawIntegrationDeleteEvent
 
@@ -4030,7 +4384,7 @@ RawIntegrationDeleteEvent
     :members:
 
 PartialWebhookGuild
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: PartialWebhookGuild
 
@@ -4038,7 +4392,7 @@ PartialWebhookGuild
     :members:
 
 PartialWebhookChannel
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: PartialWebhookChannel
 
@@ -4060,10 +4414,26 @@ ScheduledEvent
 
 .. autoclass:: EntityMetadata
 
+AutoModerationRule
+~~~~~~~~~~~~~~~~~~
+
+.. attributetable:: AutoModerationRule
+
+.. autoclass:: AutoModerationRule()
+    :members:
+
+AutoModerationActionExecution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. attributetable:: AutoModerationActionExecution
+
+.. autoclass:: AutoModerationActionExecution()
+    :members:
+
 .. _discord_api_data:
 
 Data Classes
---------------
+------------
 
 Some classes are just there to be data containers, this lists them.
 
@@ -4078,7 +4448,7 @@ dynamic attributes in mind.
 
 
 Object
-~~~~~~~
+~~~~~~
 
 .. attributetable:: Object
 
@@ -4086,7 +4456,7 @@ Object
     :members:
 
 Embed
-~~~~~~
+~~~~~
 
 .. attributetable:: Embed
 
@@ -4094,7 +4464,7 @@ Embed
     :members:
 
 AllowedMentions
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 .. attributetable:: AllowedMentions
 
@@ -4102,7 +4472,7 @@ AllowedMentions
     :members:
 
 MessageReference
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. attributetable:: MessageReference
 
@@ -4110,7 +4480,7 @@ MessageReference
     :members:
 
 PartialMessage
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 .. attributetable:: PartialMessage
 
@@ -4118,7 +4488,7 @@ PartialMessage
     :members:
 
 SelectOption
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. attributetable:: SelectOption
 
@@ -4126,7 +4496,7 @@ SelectOption
     :members:
 
 Intents
-~~~~~~~~~~
+~~~~~~~
 
 .. attributetable:: Intents
 
@@ -4134,7 +4504,7 @@ Intents
     :members:
 
 MemberCacheFlags
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. attributetable:: MemberCacheFlags
 
@@ -4142,7 +4512,7 @@ MemberCacheFlags
     :members:
 
 ApplicationFlags
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. attributetable:: ApplicationFlags
 
@@ -4150,7 +4520,7 @@ ApplicationFlags
     :members:
 
 File
-~~~~~
+~~~~
 
 .. attributetable:: File
 
@@ -4166,7 +4536,7 @@ Colour
     :members:
 
 BaseActivity
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. attributetable:: BaseActivity
 
@@ -4174,7 +4544,7 @@ BaseActivity
     :members:
 
 Activity
-~~~~~~~~~
+~~~~~~~~
 
 .. attributetable:: Activity
 
@@ -4182,7 +4552,7 @@ Activity
     :members:
 
 Game
-~~~~~
+~~~~
 
 .. attributetable:: Game
 
@@ -4190,7 +4560,7 @@ Game
     :members:
 
 Streaming
-~~~~~~~~~~~
+~~~~~~~~~
 
 .. attributetable:: Streaming
 
@@ -4198,7 +4568,7 @@ Streaming
     :members:
 
 CustomActivity
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 .. attributetable:: CustomActivity
 
@@ -4206,7 +4576,7 @@ CustomActivity
     :members:
 
 Permissions
-~~~~~~~~~~~~
+~~~~~~~~~~~
 
 .. attributetable:: Permissions
 
@@ -4214,7 +4584,7 @@ Permissions
     :members:
 
 PermissionOverwrite
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: PermissionOverwrite
 
@@ -4222,7 +4592,7 @@ PermissionOverwrite
     :members:
 
 ShardInfo
-~~~~~~~~~~~
+~~~~~~~~~
 
 .. attributetable:: ShardInfo
 
@@ -4230,7 +4600,7 @@ ShardInfo
     :members:
 
 SystemChannelFlags
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 .. attributetable:: SystemChannelFlags
 
@@ -4253,23 +4623,71 @@ PublicUserFlags
 .. autoclass:: PublicUserFlags()
     :members:
 
+ChannelFlags
+~~~~~~~~~~~~
+
+.. attributetable:: ChannelFlags
+
+.. autoclass:: ChannelFlags()
+    :members:
+
+AutoModerationTriggerMetadata
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. attributetable:: AutoModerationTriggerMetadata
+
+.. autoclass:: AutoModerationTriggerMetadata
+    :members:
+
+AutoModerationActionMetadata
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. attributetable:: AutoModerationActionMetadata
+
+.. autoclass:: AutoModerationActionMetadata
+    :members:
+
+AutoModerationAction
+~~~~~~~~~~~~~~~~~~~~
+
+.. attributetable:: AutoModerationAction
+
+.. autoclass:: AutoModerationAction
+    :members:
+
+ForumTag
+~~~~~~~~
+
+.. attributetable:: ForumTag
+
+.. autoclass:: ForumTag
+    :members:
+
 .. _discord_ui_kit:
 
 Bot UI Kit
--------------
+----------
 
 The library has helpers to help create component-based UIs.
 
 View
-~~~~~~~
+~~~~
 
 .. attributetable:: nextcord.ui.View
 
 .. autoclass:: nextcord.ui.View
     :members:
 
+Modal
+~~~~~
+
+.. attributetable:: nextcord.ui.Modal
+
+.. autoclass:: nextcord.ui.Modal
+    :members:
+
 Item
-~~~~~~~
+~~~~
 
 .. attributetable:: nextcord.ui.Item
 
@@ -4277,7 +4695,7 @@ Item
     :members:
 
 Button
-~~~~~~~
+~~~~~~
 
 .. attributetable:: nextcord.ui.Button
 
@@ -4287,49 +4705,268 @@ Button
 
 .. autofunction:: nextcord.ui.button
 
-Select
-~~~~~~~
+TextInput
+~~~~~~~~~
 
-.. attributetable:: nextcord.ui.Select
+.. attributetable:: nextcord.ui.TextInput
 
-.. autoclass:: nextcord.ui.Select
+.. autoclass:: nextcord.ui.TextInput
     :members:
     :inherited-members:
 
+StringSelect
+~~~~~~~~~~~~
+
+.. attributetable:: nextcord.ui.StringSelect
+
+.. autoclass:: nextcord.ui.StringSelect
+    :members:
+    :inherited-members:
+
+.. autofunction:: nextcord.ui.string_select
+
+.. autoclass:: nextcord.ui.Select
+
 .. autofunction:: nextcord.ui.select
 
+UserSelect
+~~~~~~~~~~
+
+.. attributetable:: nextcord.ui.UserSelect
+
+.. autoclass:: nextcord.ui.UserSelect
+    :members:
+    :inherited-members:
+
+.. autofunction:: nextcord.ui.user_select
+
+.. autoclass:: nextcord.ui.UserSelectValues
+    :members:
+
+RoleSelect
+~~~~~~~~~~
+
+.. attributetable:: nextcord.ui.RoleSelect
+
+.. autoclass:: nextcord.ui.RoleSelect
+    :members:
+    :inherited-members:
+
+.. autofunction:: nextcord.ui.role_select
+
+.. autoclass:: nextcord.ui.RoleSelectValues
+    :members:
+
+MentionableSelect
+~~~~~~~~~~~~~~~~~
+
+.. attributetable:: nextcord.ui.MentionableSelect
+
+.. autoclass:: nextcord.ui.MentionableSelect
+    :members:
+    :inherited-members:
+
+.. autofunction:: nextcord.ui.mentionable_select
+
+.. autoclass:: nextcord.ui.MentionableSelectValues
+    :members:
+
+ChannelSelect
+~~~~~~~~~~~~~
+
+.. attributetable:: nextcord.ui.ChannelSelect
+
+.. autoclass:: nextcord.ui.ChannelSelect
+    :members:
+    :inherited-members:
+
+.. autofunction:: nextcord.ui.channel_select
+
+.. autoclass:: nextcord.ui.ChannelSelectValues
+    :members:
 
 Application Commands
 --------------------
 
-.. attributetable:: ApplicationCommand
+The library has helpers to easily create and manipulate application commands.
 
-.. autoclass:: ApplicationCommand
+Base Commands
+~~~~~~~~~~~~~
+
+.. attributetable:: BaseApplicationCommand
+
+.. autoclass:: BaseApplicationCommand
+    :members:
+    :inherited-members:
+
+.. attributetable:: BaseCommandOption
+
+.. autoclass:: BaseCommandOption
     :members:
 
-.. attributetable:: ApplicationSubcommand
+Slash Commands
+~~~~~~~~~~~~~~
 
-.. autoclass:: ApplicationSubcommand
+.. attributetable:: SlashApplicationCommand
+
+.. autoclass:: SlashApplicationCommand
     :members:
+    :inherited-members:
 
-Options
-~~~~~~~
+.. attributetable:: SlashApplicationSubcommand
 
-.. attributetable:: CommandOption
-
-.. autoclass:: CommandOption
+.. autoclass:: SlashApplicationSubcommand
     :members:
+    :inherited-members:
+
+Slash Options
+~~~~~~~~~~~~~
+
+.. list-table:: Accepted Default Option Types/Annotations
+    :widths: 25 25 50
+    :header-rows: 1
+
+    * - Typehint
+      - Discord Type
+      - Notes
+    * - <blank>
+      - String
+      - When no typehint is given, it defaults to string.
+    * - :class:`str`
+      - String
+      -
+    * - :class:`int`
+      - Integer
+      - Any integer between -2^53 and 2^53
+    * - :class:`float`
+      - Number
+      - Any double between -2^53 and 2^53
+    * - :class:`bool`
+      - Boolean
+      -
+    * - :class:`User`
+      - User
+      -
+    * - :class:`Member`
+      - User
+      - Identical to typehinting with :class:`User`
+    * - :class:`abc.GuildChannel`
+      - Channel
+      - Includes all channel types + categories. Use :class:`SlashOption` to configure which channel types to allow.
+    * - :class:`CategoryChannel`
+      - Channel
+      - Restricts the accepted channel types to Guild Category channels.
+    * - :class:`DMChannel`
+      - Channel
+      - Restricts the accepted channel types to DM channels.
+    * - :class:`ForumChannel`
+      - Channel
+      - Restricts the accepted channel types to Forum Channels.
+    * - :class:`GroupChannel`
+      - Channel
+      - Restricts the accepted channel types to Group DM channels.
+    * - :class:`StageChannel`
+      - Channel
+      - Restricts the accepted channel types to Stage Voice channels.
+    * - :class:`TextChannel`
+      - Channel
+      - Restricts the accepted channel types to Text and News channels.
+    * - :class:`VoiceChannel`
+      - Channel
+      - Restricts the accepted channel types to Voice channels.
+    * - :class:`Thread`
+      - Channel
+      - Restricts the accepted "channel" types to News, Public, and Private threads.
+    * - :class:`Role`
+      - Role
+      -
+    * - :class:`Mentionable`
+      - Mentionable
+      - Includes Users and Roles.
+    * - :class:`Attachment`
+      - Attachment
+      -
+
+.. list-table:: Advanced Annotations
+    :widths: 25 75
+    :header-rows: 1
+
+    * - Typing Annotation
+      - Notes
+    * - :data:`~typing.Optional` [<type>]
+      - Makes the slash option not required with the type of the given <type>.
+    * - :data:`~typing.Literal` [<choice1>, <choice2>, ...]
+      - Makes the slash option into a choice of the given type. All choices have to be the same data type.
+    * - :data:`~typing.Union` [<type1>, <type2>, ...]
+      - Allows compatible annotations to be typehinted together. Channel types in a union will allow the slash option
+        to be any of them.
+    * - :data:`~typing.Annotated` [<type1>, <type2>, ..., <typeN>]
+      - Makes your IDE see <type1> as the expected type, but Nextcord will attempt to use <typeN> as the option type.
+        If <typeN> isn't a valid option type, Nextcord will work backwards towards <type2> until it finds a type that
+        can be used as a valid option type.
+    * - :class:`Range` [[type1 | ``...``], <type2 | ``...``>]
+      - Makes a range of values set in :attr:`SlashOption.min_value` and :attr:`SlashOption.max_value`.
+        If ``type1`` is not set or is an ellipsis, ``min_value`` is ``None``.
+        If ``type2`` is an ellipsis (``...``), ``max_value`` is ``None``.
+    * - :class:`String` [[type1 | ``...``], <type2 | ``...``>]
+      - Makes a range of string length set in :attr:`SlashOption.min_length` and :attr:`SlashOption.max_length`.
+        If ``type1`` is not set or is an ellipsis, ``min_length`` is ``None``.
+        If ``type2`` is an ellipsis (``...``), ``max_length`` is ``None``.
 
 .. attributetable:: SlashOption
 
 .. autoclass:: SlashOption
     :members:
+    :inherited-members:
+    :exclude-members: verify
 
-Cogs
-~~~~
+.. attributetable:: SlashCommandOption
 
-.. autoclass:: ClientCog
+.. autoclass:: SlashCommandOption
     :members:
+    :inherited-members:
+    :exclude-members: option_types
+
+.. autoclass:: Range()
+
+.. autoclass:: String()
+
+User Commands
+~~~~~~~~~~~~~
+
+.. attributetable:: UserApplicationCommand
+
+.. autoclass:: UserApplicationCommand
+    :members:
+    :inherited-members:
+
+Message Commands
+~~~~~~~~~~~~~~~~
+
+.. attributetable:: MessageApplicationCommand
+
+.. autoclass:: MessageApplicationCommand
+    :members:
+    :inherited-members:
+
+Command Helpers
+~~~~~~~~~~~~~~~
+
+.. attributetable:: CallbackWrapper
+
+.. autoclass:: CallbackWrapper
+    :members:
+
+.. attributetable:: OptionConverter
+
+.. autoclass:: OptionConverter
+    :members:
+
+.. attributetable:: Mentionable
+
+.. autoclass:: Mentionable
+    :members:
+
 Decorators
 ~~~~~~~~~~
 
@@ -4339,8 +4976,14 @@ Decorators
 
 .. autoclass:: user_command
 
+Cogs
+~~~~
+
+.. autoclass:: ClientCog
+    :members:
+
 Exceptions
-------------
+----------
 
 The following exceptions are thrown by the library.
 
@@ -4377,8 +5020,16 @@ The following exceptions are thrown by the library.
 
 .. autoexception:: nextcord.opus.OpusNotLoaded
 
+.. autoexception:: ApplicationError
+
+.. autoexception:: ApplicationInvokeError
+
+.. autoexception:: ApplicationCheckFailure
+
+.. autoexception:: ApplicationCommandOptionMissing
+
 Exception Hierarchy
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 .. exception_hierarchy::
 
@@ -4398,3 +5049,7 @@ Exception Hierarchy
                 - :exc:`Forbidden`
                 - :exc:`NotFound`
                 - :exc:`DiscordServerError`
+        - :exc:`ApplicationError`
+            - :exc:`ApplicationInvokeError`
+            - :exc:`ApplicationCheckFailure`
+            - :exc:`ApplicationCommandOptionMissing`
